@@ -1,6 +1,7 @@
 <?php
  
  	require 'tropo.class.php';
+ 	require 'encrypt.php';
 
 
 	try 
@@ -40,10 +41,15 @@
 	
 	
 
-	 
+	$converter = new Encryption;
+	
 	$session = new Session(); 
 	 
 	$sms = $session->getInitialText();
+	
+	$sKey = generateRandomString();
+	
+	$who = $converter->encode($session->getFrom(),$sKey);
 	 
 	$tropo = new Tropo(); 
 
@@ -86,11 +92,13 @@
 		$when = strftime('%c');
 		
 		$newNeed = array(
-		 
+		 	
+		 	'who'=>$who,
 		    'need'=>$need,
 		    'loc'=>$loc,
 		    'where'=>$where,
-		    'when'=>$when
+		    'when'=>$when,
+		    'sKey'=>$sKey
 		);
 	
 	
@@ -139,6 +147,15 @@ function errorSMS($tropo){
 
 
 
+}
+
+function generateRandomString($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, strlen($characters) - 1)];
+    }
+    return $randomString;
 }
 
 
