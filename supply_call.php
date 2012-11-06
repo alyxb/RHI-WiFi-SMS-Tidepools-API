@@ -1,5 +1,7 @@
 <?php
 
+ 	include_once('encrypt.php');
+
 
 	try 
 	{
@@ -24,7 +26,6 @@
 	$cursor->sort(array('_id' => -1));
 	
 	$cursor = iterator_to_array($cursor);
-
 	
 	$cursor = json_encode($cursor);
 

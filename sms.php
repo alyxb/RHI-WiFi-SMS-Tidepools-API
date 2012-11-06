@@ -1,7 +1,12 @@
 <?php
  
- 	require 'tropo.class.php';
- 	require 'encrypt.php';
+	
+ 	require('tropo.class.php');
+ 	
+ 	include_once('encrypt.php');
+
+ 	//require 'encrypt.php';
+ 	
 
 
 	try 
@@ -16,6 +21,11 @@
 	    exit();
 	}
 	
+	
+	
+	//look through HASH of all phone numbers --> have we seen this before?
+	
+
 	
 	$type = 'supplies';
 	
@@ -41,7 +51,6 @@
 	
 	
 
-	$converter = new Encryption;
 	
 	$session = new Session(); 
 	 
@@ -49,8 +58,16 @@
 	
 	$sKey = generateRandomString();
 	
-	$who = $converter->encode($session->getFrom(),$sKey);
-	 
+	$converter = new Encryption;
+
+	
+	$whoA = $session->getFrom();
+	
+	
+	$whoA = $whoA['id'];
+	
+	$who = $converter->encode($whoA,$sKey);
+
 	$tropo = new Tropo(); 
 
 	
@@ -103,14 +120,14 @@
 	
 	
 		
-		insertNeed($newNeed, $coll, $need, $where, $tropo, $when, $loc, $collection, $collection2);
+		insertNeed($newNeed, $coll, $need, $where, $tropo, $when, $loc, $collection, $collection2, $who, $sKey);
 
 	}
 
 		
 	
 	
-	function insertNeed($newNeed,$coll, $need, $where, $tropo, $when, $loc, $collection, $collection2){
+	function insertNeed($newNeed,$coll, $need, $where, $tropo, $when, $loc, $collection, $collection2, $who, $sKey){
 			
 		$safe_insert = true;
 		
@@ -128,7 +145,7 @@
 		
 		
 		
-		recordLandmark($loc, $where, $need, $collection, $collection2, $when);
+		recordLandmark($loc, $where, $need, $collection, $collection2, $when, $who, $sKey);
 
 		
 
@@ -159,13 +176,15 @@ function generateRandomString($length = 10) {
 }
 
 
-function recordLandmark($loc, $where, $need, $collection, $collection2, $when){
+
+
+function recordLandmark($loc, $where, $need, $collection, $collection2, $when, $who, $sKey){
 
 
 
 	$marktype = "alert";
 
-	$mapID = "509022b6a5d3972e03000000"; //adding SMS texts to this map
+	$mapID = "509022b6a5d3972e03000000"; //adding SMS texts to this map layer
 	
 		
 		
@@ -186,6 +205,15 @@ function recordLandmark($loc, $where, $need, $collection, $collection2, $when){
 			'arriving' => 0
 	
 		);
+		
+		
+	//------- SMS Stats ---------//
+	
+	$smsInfo = array(	
+	
+		'who'=>$who,
+		'sKey'=>$sKey
+	);
 
 
 
@@ -268,7 +296,8 @@ function recordLandmark($loc, $where, $need, $collection, $collection2, $when){
 		    'stats'=>$stats,
 		    'insides'=>$insides,
 		    'feed'=>$feed,
-		    'permissions'=>$permissions
+		    'permissions'=>$permissions,
+		    'smsInfo'=>$smsInfo
 
 		);
 		

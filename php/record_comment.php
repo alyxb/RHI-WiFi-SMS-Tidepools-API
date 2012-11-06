@@ -1,5 +1,11 @@
 <?php
 
+
+ 	require('../tropo.class.php');
+ 	
+ 	include_once('../encrypt.php');
+ 	
+
 /**
  *	TidePools Social WiFi
  *  Copyright (C) 2012 Jonathan Baldwin <jrbaldwin@gmail.com>
@@ -75,7 +81,7 @@ if($_POST['description']) {
 	
 	updateLandmark($comment, $collection);
 
-	
+	//sendSMS($words);
 	
 	
 }
@@ -84,10 +90,12 @@ if($_POST['description']) {
 	function updateLandmark($comment, $collection){ 
 	
 	
+		
 	
 		$landmarkID = $_POST['landmarkID'];
 		
-	
+		
+		
 	
 		$landmarkID = preg_replace("/[^a-zA-Z0-9\s]/", "", $landmarkID); 
 		
@@ -101,14 +109,39 @@ if($_POST['description']) {
 		if($collection->update(array("_id"=>$objID), $newdata)){
 		
 		
-			echo "success";
+			echo "success"; //SHOULD THIS BE A SMS SENT CONFIRMATION in tidepools comment feed?
 		
 		}
 		
 		
+		sendSMS($comment, $landmarkID);
+	}
+	
+	
+	
+	function sendSMS($comment, $landmarkID){
+	
+	
+		//$textBody = $comment['words'];
+		
+		// shorten $textBody to 160 characters (incl. spaces)
+	
+		//mongo search for landmarkID
+		
+		//CHECK nested landmark array for smsInfo array ----> if smsInfo !== null { do rest of stuff }   <--- this is to check if this landmark was created via SMS
+		
+		//inside smsInfo nested array: decrypt phone number with:
+		
+			// $textPhoneNum = $converter->decode($whoA,$sKey);  <--- following encryption in sms.php
 
+		//setup TROPO auth token 
+		
+		//send SMS with $textBody via unencrypted phone #
+	
+	
 	
 	}
+	
 	
 	
 
